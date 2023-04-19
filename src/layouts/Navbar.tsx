@@ -15,8 +15,9 @@ import MailIcon from '@mui/icons-material/Mail';
 import EventIcon from '@mui/icons-material/Event';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { Divider } from '@mui/material';
+import { Button, Divider } from '@mui/material';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -83,6 +84,10 @@ export function Navbar() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const handleToast = (message: string) => {
+    toast.success(message);
+  }
+  
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -202,16 +207,17 @@ export function Navbar() {
               <Badge badgeContent={4} color="error">
                 <MailIcon />
               </Badge>
-            </IconButton>
-            <IconButton
+            </IconButton> */}
+            <Button
+              onClick={() => handleToast('Login gambeta efetuado com sucesso')} 
               size="large"
               aria-label="show 17 new notifications"
               color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton> */}
+              >                    
+              <Typography variant='body1'>
+                LOGIN GAMBETA
+              </Typography>
+            </Button>
 
             <IconButton
               size="large"
@@ -238,9 +244,10 @@ export function Navbar() {
             </IconButton>
           </Box>
         </Toolbar>
+        {/* <Toaster /> */}
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
-    </Box>
+    </Box>    
   );
 }
