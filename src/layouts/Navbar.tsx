@@ -16,8 +16,10 @@ import EventIcon from '@mui/icons-material/Event';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { Button, Divider } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, json } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import user from '../models/user';
+import { useState, useEffect } from 'react';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -62,7 +64,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-    React.useState<null | HTMLElement>(null);
+    useState<null | HTMLElement>(null);
+    
+  const [user, setUser] = useState<user | null>(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -84,8 +88,30 @@ export function Navbar() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const handleToast = (message: string) => {
-    toast.success(message);
+  const handleLoginCliente = () => {
+    const cliente: user = {
+      id: 1,
+      nome: 'Dougras',
+      categoria: 'CLIENTE'
+    }
+
+    localStorage.setItem('user', JSON.stringify(cliente));
+    setUser(cliente);
+
+    toast.success('Login cliente efetuado com sucesso');
+  }
+
+  const handleLoginPrestador = () => {
+    const prestador: user = {
+      id: 1,
+      nome: 'Paredinha',
+      categoria: 'PRESTADOR'
+    }
+
+    setUser(prestador);
+    localStorage.setItem('user', JSON.stringify(prestador));
+
+    toast.success('Login prestador efetuado com sucesso');
   }
   
   const menuId = 'primary-search-account-menu';
@@ -209,13 +235,28 @@ export function Navbar() {
               </Badge>
             </IconButton> */}
             <Button
-              onClick={() => handleToast('Login gambeta efetuado com sucesso')} 
+              onClick={handleLoginCliente} 
               size="large"
               aria-label="show 17 new notifications"
-              color="inherit"
+              color='inherit'
+              variant={user?.categoria !== 'CLIENTE' && 'text' || 'outlined'}
+              disabled={user?.categoria == 'CLIENTE'}
               >                    
               <Typography variant='body1'>
-                LOGIN GAMBETA
+              {user?.categoria == 'CLIENTE' && 'LOGADO CLIENTE' || 'LOGIN CLIENTE'}
+              </Typography>
+            </Button>
+
+            <Button
+              onClick={handleLoginPrestador} 
+              size="large"
+              aria-label="show 17 new notifications"
+              color="inherit"  
+              variant={user?.categoria !== 'PRESTADOR' && 'text' || 'outlined'}
+              disabled={user?.categoria == 'PRESTADOR'}          
+              >                    
+              <Typography variant='body1'>
+              {user?.categoria == 'PRESTADOR' && 'LOGADO PRESTADOR' || 'LOGIN PRESTADOR'}
               </Typography>
             </Button>
 
