@@ -16,57 +16,28 @@ import EventIcon from '@mui/icons-material/Event';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { Button, Divider } from '@mui/material';
-import { Link, json } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import user from '../models/user';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router'
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto',
-  },
-}));
+export function Navbar() {  
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
-    },
-  },
-}));
-
-export function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     useState<null | HTMLElement>(null);
     
-  const [user, setUser] = useState<user | null>(null);
+  const [usuarioAtual, setUsuarioAtual] = useState<user | null>(null);
+  
+  useEffect(() => {
+    const localStorageUser = localStorage.getItem('user');    
+
+    if (localStorageUser) {
+      setUsuarioAtual(JSON.parse(localStorageUser))
+    }  
+
+  }, [])
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -88,15 +59,20 @@ export function Navbar() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const navigate = useNavigate()
+
   const handleLoginCliente = () => {
     const cliente: user = {
       id: 1,
       nome: 'Dougras',
-      categoria: 'CLIENTE'
+      categoria: 'CLIENTE',
+      email: 'doguinha@dougras.com'
     }
 
     localStorage.setItem('user', JSON.stringify(cliente));
-    setUser(cliente);
+    setUsuarioAtual(cliente);
+
+    navigate(0);
 
     toast.success('Login cliente efetuado com sucesso');
   }
@@ -105,14 +81,17 @@ export function Navbar() {
     const prestador: user = {
       id: 1,
       nome: 'Paredinha',
-      categoria: 'PRESTADOR'
+      categoria: 'PRESTADOR',
+      email: 'paredinha@paredes.com'
     }
 
-    setUser(prestador);
+    setUsuarioAtual(prestador);
     localStorage.setItem('user', JSON.stringify(prestador));
 
+    navigate(0);
+
     toast.success('Login prestador efetuado com sucesso');
-  }
+  }  
   
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
@@ -216,14 +195,17 @@ export function Navbar() {
           <Divider style={{ background: 'white', marginLeft: '1rem', marginRight: '1rem' }} orientation="vertical" variant='middle' flexItem />
 
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="error">
-                <Typography variant='body1'>
-                  Agendamentos
-                </Typography>                
-                <EventIcon />                
-              </Badge>
-            </IconButton>
+            <Link to='/agendamentos' style={{ textDecoration: 'none', color: 'inherit' }}>
+
+              <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                <Badge color="error">
+                  <Typography variant='body1'>
+                    Agendamentos
+                  </Typography>                
+                  <EventIcon />                
+                </Badge>
+              </IconButton>
+            </Link>
           </Box>
           
           <Box sx={{ flexGrow: 1 }} />
@@ -239,11 +221,11 @@ export function Navbar() {
               size="large"
               aria-label="show 17 new notifications"
               color='inherit'
-              variant={user?.categoria !== 'CLIENTE' && 'text' || 'outlined'}
-              disabled={user?.categoria == 'CLIENTE'}
+              variant={usuarioAtual?.categoria !== 'CLIENTE' && 'text' || 'outlined'}
+              disabled={usuarioAtual?.categoria === 'CLIENTE'}
               >                    
               <Typography variant='body1'>
-              {user?.categoria == 'CLIENTE' && 'LOGADO CLIENTE' || 'LOGIN CLIENTE'}
+                {usuarioAtual?.categoria === 'CLIENTE' && 'LOGADO CLIENTE' || 'LOGIN CLIENTE'}
               </Typography>
             </Button>
 
@@ -252,11 +234,11 @@ export function Navbar() {
               size="large"
               aria-label="show 17 new notifications"
               color="inherit"  
-              variant={user?.categoria !== 'PRESTADOR' && 'text' || 'outlined'}
-              disabled={user?.categoria == 'PRESTADOR'}          
+              variant={usuarioAtual?.categoria !== 'PRESTADOR' && 'text' || 'outlined'}
+              disabled={usuarioAtual?.categoria === 'PRESTADOR'}          
               >                    
               <Typography variant='body1'>
-              {user?.categoria == 'PRESTADOR' && 'LOGADO PRESTADOR' || 'LOGIN PRESTADOR'}
+                {usuarioAtual?.categoria === 'PRESTADOR' && 'LOGADO PRESTADOR' || 'LOGIN PRESTADOR'}
               </Typography>
             </Button>
 
