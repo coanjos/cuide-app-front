@@ -1,5 +1,7 @@
+import ListaAgendamentos from "../components/Agendamentos/ListaAgendamentos";
+
 export function Agendamentos() {
     return (
-        <h1>Olá doguinha</h1>
+        <ListaAgendamentos />
     )
 }
